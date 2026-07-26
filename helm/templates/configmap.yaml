@@ -3,4 +3,16 @@ kind: ConfigMap
 metadata:
   name: {{ include "iels-api.fullname" . }}-config
 data:
-  ASPNETCORE_ENVIRONMENT: {{ .Values.env.ASPNETCORE_ENVIRONMENT }}
+  appsettings.json: |
+    {
+      "App": {
+        "Name": "{{ include "iels-api.name" . }}",
+        "Environment": "{{ .Values.env.ASPNETCORE_ENVIRONMENT }}"
+      },
+      "Database": {
+        "Postgres": "{{ .Values.database.postgresConnection }}"
+      },
+      "Redis": {
+        "Connection": "{{ .Values.redis.connectionString }}"
+      }
+    }
