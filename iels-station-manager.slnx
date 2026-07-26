@@ -1,2 +1,14 @@
 <Solution>
+  <Folder Name="/src/">
+    <Project Path="src/StationManager.Api/StationManager.Api.csproj" />
+    <Project Path="src/StationManager.Application/StationManager.Application.csproj" />
+    <Project Path="src/StationManager.Domain/StationManager.Domain.csproj" />
+    <Project Path="src/StationManager.Infrastructure/StationManager.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/StationManager.Api.Test/StationManager.Api.Test.csproj" />
+    <Project Path="test/StationManager.Application.Test/StationManager.Application.Test.csproj" />
+    <Project Path="test/StationManager.Domain.Test/StationManager.Domain.Test.csproj" />
+    <Project Path="test/StationManager.Infrastructure.Test/StationManager.Infrastructure.Test.csproj" />
+  </Folder>
 </Solution>
