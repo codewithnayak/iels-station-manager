@@ -1,0 +1,31 @@
+image:
+  repository: docker.io/sekharnayak/iels-station-manager
+  tag: "latest"
+  pullPolicy: Always
+
+service:
+  port: 8080
+  type: ClusterIP
+
+env:
+  ASPNETCORE_ENVIRONMENT: "Development"
+
+resources:
+  limits:
+    cpu: "500m"
+    memory: "512Mi"
+  requests:
+    cpu: "200m"
+    memory: "256Mi"
+
+ingress:
+  enabled: true
+  className: "gce"
+  host: "station-manager.iels.dev"
+  path: /
+
+database:
+  postgresConnection: "Host=postgres.infra.svc.cluster.local;Port=5432;Database=stationmanager;Username=postgres;Password=YOUR_PASSWORD"
+
+redis:
+  connectionString: "redis.infra.svc.cluster.local:6379"
