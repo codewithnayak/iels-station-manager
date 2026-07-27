@@ -1,0 +1,84 @@
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  # Docker Hub credentials (variable group with dockerhubUser, dockerhubPass)
+  - group: DockerHub-Variables
+
+  - name: DOCKERHUB_USERNAME
+    value: "$(dockerhubUser)"
+  - name: DOCKERHUB_PASSWORD
+    value: "$(dockerhubPass)"
+
+  # Azure DevOps service connection
+  - name: AZURE_SUBSCRIPTION
+    value: "YOUR-AZURE-SERVICE-CONNECTION"
+
+  # Infra names for Station Manager
+  - name: RESOURCE_GROUP
+    value: "rg-iels-station"
+  - name: APP_SERVICE_PLAN
+    value: "asp-iels-station-linux"
+  - name: WEBAPP_NAME
+    value: "iels-station-manager-app"
+
+  # Docker image
+  - name: IMAGE_NAME
+    value: "iels-station-manager"
+  - name: IMAGE_TAG
+    value: "$(Build.BuildId)"
+
+steps:
+  - task: UseDotNet@2
+    displayName: "Install .NET SDK"
+    inputs:
+      packageType: "sdk"
+      version: "10.0.x"
+
+  - script: |
+      dotnet restore
+      dotnet publish -c Release -o out
+    displayName: "Build .NET API"
+
+  - task: DockerInstaller@0
+    displayName: "Install Docker"
+
+  - script: |
+      echo "$(DOCKERHUB_PASSWORD)" | docker login -u "$(DOCKERHUB_USERNAME)" --password-stdin
+
+      docker build -t $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(IMAGE_TAG) .
+      docker push $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(IMAGE_TAG)
+    displayName: "Build & Push Docker Image"
+
+  - task: AzureCLI@2
+    displayName: "Create RG, Plan, WebApp (idempotent)"
+    inputs:
+      azureSubscription: "$(AZURE_SUBSCRIPTION)"
+      scriptType: bash
+      scriptLocation: inlineScript
+      inlineScript: |
+        az group create \
+          --name $(RESOURCE_GROUP) \
+          --location "West Europe"
+
+        az appservice plan create \
+          --name $(APP_SERVICE_PLAN) \
+          --resource-group $(RESOURCE_GROUP) \
+          --sku B1 \
+          --is-linux
+
+        az webapp create \
+          --name $(WEBAPP_NAME) \
+          --resource-group $(RESOURCE_GROUP) \
+          --plan $(APP_SERVICE_PLAN) \
+          --deployment-container-image-name $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(IMAGE_TAG)
+
+  - task: AzureWebAppContainer@1
+    displayName: "Deploy container to Azure App Service"
+    inputs:
+      azureSubscription: "$(AZURE_SUBSCRIPTION)"
+      appName: "$(WEBAPP_NAME)"
+      imageName: "$(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(IMAGE_TAG)"
