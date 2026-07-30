@@ -37,7 +37,7 @@ if (!string.IsNullOrEmpty(password))
 {
     app.Logger.LogDebug(password);
     builder.Configuration["ConnectionStrings:Postgres"] =
-        $"Host=postgres-dev.ielsportal.com;Database=stationdb;Username=ielsuser;Password={password}";
+        $"Host=postgres-dev.ielsportal.com;Port=5432;Database=stationdb;Username=ielsuser;Password={password}";
     app.Logger.LogDebug(builder.Configuration["ConnectionStrings:Postgres"]?.ToString());
 }
 
