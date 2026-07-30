@@ -37,8 +37,8 @@ if (!string.IsNullOrEmpty(password))
 {
     app.Logger.LogDebug(password);
     builder.Configuration["ConnectionStrings:Postgres"] =
-        $"Host=postgres-dev.ielsportal.com;Database=stationdb;Username=postgres;Password={password}";
-    app.Logger.LogDebug(password);
+        $"Host=postgres-dev.ielsportal.com;Database=stationdb;Username=ielsuser;Password={password}";
+    app.Logger.LogDebug(builder.Configuration["ConnectionStrings:Postgres"]?.ToString());
 }
 
 using (var scope = app.Services.CreateScope())
