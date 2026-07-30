@@ -57,9 +57,10 @@ steps:
       scriptType: bash
       scriptLocation: inlineScript
       inlineScript: |
-        az group create \
-          --name $(RESOURCE_GROUP) \
-          --location "West Europe"
+
+        az provider register --namespace Microsoft.Web
+
+        az provider show --namespace Microsoft.Web --query registrationState
 
         az appservice plan create \
           --name $(APP_SERVICE_PLAN) \
