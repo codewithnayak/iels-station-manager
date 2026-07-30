@@ -2,15 +2,20 @@
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-# Copy everything
-COPY . .
+# Copy project files individually (ensures restore works)
+COPY src/StationManager.Api/StationManager.Api.csproj StationManager.Api/
+COPY src/StationManager.Domain/StationManager.Domain.csproj StationManager.Domain/
+COPY src/StationManager.Infrastructure/StationManager.Infrastructure.csproj StationManager.Infrastructure/
+COPY src/StationManager.Application/StationManager.Application.csproj StationManager.Application/
 
-# Move into the API project folder
-WORKDIR /src/StationManager.Api
+# Restore using the API project (it references the others)
+RUN dotnet restore StationManager.Api/StationManager.Api.csproj
 
-# Restore + publish
-RUN dotnet restore
-RUN dotnet publish -c Release -o /app
+# Copy the rest of the source code
+COPY src/ .
+
+# Publish
+RUN dotnet publish StationManager.Api/StationManager.Api.csproj -c Release -o /app
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
@@ -22,4 +27,3 @@ ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 
 ENTRYPOINT ["dotnet", "StationManager.Api.dll"]
-
