@@ -24,6 +24,8 @@ variables:
     value: "iels-station-manager"
   - name: IMAGE_TAG
     value: "$(Build.BuildId)"
+  - name: WORKSPACE_ID
+    value: "8225f0cf-6709-4c43-8185-713e419ff1aa"
 
 steps:
   - task: UseDotNet@2
@@ -58,7 +60,8 @@ steps:
         az containerapp env create \
           --name $(CONTAINERAPPS_ENV) \
           --resource-group $(RESOURCE_GROUP) \
-          --location "uksouth"
+          --location "uksouth" \
+          --logs-workspace-id $(WORKSPACE_ID) 
 
         az containerapp create \
           --name $(CONTAINERAPP_NAME) \
