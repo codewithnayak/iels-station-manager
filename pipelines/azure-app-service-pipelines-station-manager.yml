@@ -24,16 +24,29 @@ variables:
     value: "iels-station-manager"
   - name: IMAGE_TAG
     value: "$(Build.BuildId)"
+
   - name: WORKSPACE_ID
     value: "8225f0cf-6709-4c43-8185-713e419ff1aa"
+  - name: WORKSPACE_KEY
+    value: "$(workspaceKey)"
 
 steps:
+  # NuGet caching
+  - task: Cache@2
+    displayName: "Cache NuGet packages"
+    inputs:
+      key: 'nuget | "$(Agent.OS)" | **/*.csproj'
+      restoreKeys: |
+        nuget | "$(Agent.OS)"
+      path: ~/.nuget/packages
+
   - task: UseDotNet@2
     displayName: "Install .NET SDK"
     inputs:
       packageType: "sdk"
       version: "10.0.x"
 
+  # Restore + publish using cached packages
   - script: |
       dotnet restore
       dotnet publish -c Release -o out
@@ -42,9 +55,22 @@ steps:
   - task: DockerInstaller@0
     displayName: "Install Docker"
 
+  # Docker layer caching
+  - task: Cache@2
+    displayName: "Cache Docker layers"
+    inputs:
+      key: 'docker | "$(Agent.OS)"'
+      path: /tmp/.docker-cache
+
   - script: |
       echo "$(DOCKERHUB_PASSWORD)" | docker login -u "$(DOCKERHUB_USERNAME)" --password-stdin
-      docker build -t $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(IMAGE_TAG) .
+
+      docker build \
+        --cache-from /tmp/.docker-cache \
+        --tag $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(IMAGE_TAG) .
+
+      docker save $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(IMAGE_TAG) -o /tmp/.docker-cache
+
       docker push $(DOCKERHUB_USERNAME)/$(IMAGE_NAME):$(IMAGE_TAG)
     displayName: "Build & Push Docker Image"
 
