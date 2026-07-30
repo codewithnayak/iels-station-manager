@@ -15,4 +15,4 @@ COPY --from=build /app/publish .
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 
-ENTRYPOINT ["dotnet", "iels-station-manager.dll"]
+ENTRYPOINT ["dotnet", "StationManager.Api.dll"]
