@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using StationManager.Api.DI;
 
@@ -26,6 +27,21 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<StationDbContext>();
+    db.Database.Migrate();
+}
+
+//This will change , when we move to GKE standard cluster 
+var password = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
+
+if (!string.IsNullOrEmpty(password))
+{
+    builder.Configuration["ConnectionStrings:Postgres"] =
+        $"Host=postgres-dev.ielsportal.com;Database=stationdb;Username=postgres;Password={password}";
 }
 
 app.MapControllers();
