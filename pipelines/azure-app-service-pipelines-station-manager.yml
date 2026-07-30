@@ -16,7 +16,7 @@ variables:
   - name: RESOURCE_GROUP
     value: "iels-platform"
   - name: CONTAINERAPPS_ENV
-    value: "station-env"
+    value: "station-env-dev"
   - name: CONTAINERAPP_NAME
     value: "station-manager-api"
 
