@@ -20,6 +20,8 @@ public static class ServiceRegistration
 
         services.AddValidatorsFromAssembly(typeof(CreateStateRequestValidator).Assembly);
         services.AddValidatorsFromAssembly(typeof(CreateStationRequestValidator).Assembly);
+        
+        
     }
 
 }

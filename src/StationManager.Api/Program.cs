@@ -4,8 +4,9 @@ using StationManager.Api.DI;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHealthChecks();
 // Load Kubernetes ConfigMap JSON if present
-var configMapPath = "/app/config/appsettings.json";
+const string configMapPath = "/app/config/appsettings.json";
 
 if (File.Exists(configMapPath))
 {
@@ -49,6 +50,7 @@ using (var scope = app.Services.CreateScope())
  
 
 app.MapControllers();
+app.MapHealthChecks("health");
 //app.UseHttpsRedirection();
 app.MapScalarApiReference();
 app.Run();
