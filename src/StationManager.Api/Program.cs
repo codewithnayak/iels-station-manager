@@ -42,11 +42,11 @@ if (!string.IsNullOrEmpty(password))
     app.Logger.LogDebug(builder.Configuration["ConnectionStrings:Postgres"]?.ToString());
 }
 
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<StationDbContext>();
-    db.Database.Migrate();
-}
+// using (var scope = app.Services.CreateScope())
+// {
+//     var db = scope.ServiceProvider.GetRequiredService<StationDbContext>();
+//     db.Database.Migrate();
+// }
  
 
 app.MapControllers();
