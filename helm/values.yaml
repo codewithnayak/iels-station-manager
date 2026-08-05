@@ -103,7 +103,7 @@ autoscaling:
 volumes:
   - name: config-volume
     configMap:
-      name: station-manager-dev-config
+      name: iels-station-api-config
 
 # Additional volumeMounts on the output Deployment definition.
 volumeMounts:
