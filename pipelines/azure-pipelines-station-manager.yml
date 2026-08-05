@@ -94,7 +94,7 @@ steps:
 
       echo "Fetching GKE credentials..."
       gcloud container clusters get-credentials $(GKE_CLUSTER) \
-      --region europe-west12 \
+      --zone europe-west2-a \
       --project $(GCP_PROJECT)
     displayName: "Authenticate to GKE"
 
