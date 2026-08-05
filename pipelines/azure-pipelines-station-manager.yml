@@ -29,10 +29,10 @@ variables:
     value: "iels-org"
 
   - name: GKE_CLUSTER
-    value: "autopilot-cluster-1"
+    value: "kcl-iels-platform"
 
   - name: HELM_NAMESPACE
-    value: "iels-dev"
+    value: "iels-api-dev"
 
 steps:
   # Install .NET SDK
