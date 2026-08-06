@@ -11,8 +11,8 @@ data:
       },
       "Logging": {
          "LogLevel": {
-           "Default": "Information",
-           "Microsoft.AspNetCore": "Error"
+           "Default": "Debug",
+           "Microsoft.AspNetCore": "Debug"
           }
       },
       "Database": {

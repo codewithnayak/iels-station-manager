@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 public class StateController : ControllerBase
 {
     private readonly IStateService _service;
+    private readonly ILogger<StateController> _logger;
 
-    public StateController(IStateService service)
+    public StateController(IStateService service , ILogger<StateController> logger)
     {
         _service = service;
+        _logger = logger;
     }
 
     [HttpPost]
