@@ -1,43 +1,26 @@
-{{- if .Values.ingress.enabled -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "new-helm.fullname" . }}
-  labels:
-    {{- include "new-helm.labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
+  name: station-manager-ingress
+  namespace: iels-api-dev
   annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /station-manager/$2
 spec:
-  {{- with .Values.ingress.className }}
-  ingressClassName: {{ . }}
-  {{- end }}
-  {{- if .Values.ingress.tls }}
+  ingressClassName: nginx-apis
   tls:
-    {{- range .Values.ingress.tls }}
     - hosts:
-        {{- range .hosts }}
-        - {{ . | quote }}
-        {{- end }}
-      secretName: {{ .secretName }}
-    {{- end }}
-  {{- end }}
+        - apis.ielsportal.com
+      secretName: cwa-tls-secret
+
   rules:
-    {{- range .Values.ingress.hosts }}
-    - host: {{ .host | quote }}
+    - host: apis.ielsportal.com
       http:
         paths:
-          {{- range .paths }}
-          - path: {{ .path }}
-            {{- with .pathType }}
-            pathType: {{ . }}
-            {{- end }}
+          - path: /station-manager(/|$)(.*)
+            pathType: Prefix
             backend:
               service:
-                name: {{ include "new-helm.fullname" $ }}
+                name: iels-station-api
                 port:
-                  number: {{ $.Values.service.port }}
-          {{- end }}
-    {{- end }}
-{{- end }}
+                  number: 80
