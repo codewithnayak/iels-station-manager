@@ -23,6 +23,7 @@ builder.Services.AddControllers();
 builder.Services.AddServices(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();
 var app = builder.Build();
+//app.UsePathBase("/station-manager");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
