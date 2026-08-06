@@ -5,7 +5,7 @@ metadata:
   namespace: iels-api-dev
   annotations:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /station-manager/$1
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   ingressClassName: nginx-apis
   tls:
